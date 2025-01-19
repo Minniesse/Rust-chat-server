@@ -9,7 +9,7 @@ use crate::{command, event};
 
 use super::common::{BoxedStream, NEW_LINE};
 
-/// [EventStream] is a stream of [crate::event::Event]s sent by the server
+/// [EventStream] is a stream of [event::Event]s sent by the server
 ///
 /// # Cancel Safety
 ///
@@ -17,7 +17,7 @@ use super::common::{BoxedStream, NEW_LINE};
 /// without the risk of missing events.
 pub type EventStream = BoxedStream<anyhow::Result<event::Event>>;
 
-/// [CommandWriter] is a wrapper around a [TcpStream] which writes [crate::command::UserCommand]s to the server
+/// [CommandWriter] is a wrapper around a [TcpStream] which writes [command::UserCommand]s to the server
 pub struct CommandWriter {
     writer: OwnedWriteHalf,
 }
@@ -27,13 +27,13 @@ impl CommandWriter {
         Self { writer }
     }
 
-    /// Send a [crate::command::UserCommand] to the backing [TcpStream]
+    /// Send a [command::UserCommand] to the backing [TcpStream]
     ///
     /// # Cancel Safety
     ///
     /// This method is not cancellation safe. If it is used as the event
     /// in a [tokio::select!] statement and some other
-    /// branch completes first, then the provided [crate::command::UserCommand] may have been
+    /// branch completes first, then the provided [command::UserCommand] may have been
     /// partially written, but future calls to `write` will start over
     /// from the beginning of the buffer. Causing undefined behaviour.
     pub async fn write(&mut self, command: &command::UserCommand) -> anyhow::Result<()> {

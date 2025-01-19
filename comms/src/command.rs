@@ -46,7 +46,7 @@ pub enum UserCommand {
 mod tests {
     use super::*;
 
-    // given a command enum, and an expect string, asserts that command is serialized / deserialized appropiately
+    // given a command enum, and an expect string, asserts that command is serialized / deserialized appropriately
     fn assert_command_serialization(command: &UserCommand, expected: &str) {
         let serialized = serde_json::to_string(&command).unwrap();
         assert_eq!(serialized, expected);

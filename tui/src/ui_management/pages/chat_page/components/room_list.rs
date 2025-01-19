@@ -1,6 +1,6 @@
 use crossterm::event::{KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
-    prelude::{Backend, Rect},
+    prelude::Rect,
     style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Borders, List, ListItem, ListState},
@@ -188,7 +188,7 @@ pub struct RenderProps {
 }
 
 impl ComponentRender<RenderProps> for RoomList {
-    fn render<B: Backend>(&self, frame: &mut Frame<B>, props: RenderProps) {
+    fn render(&self, frame: &mut Frame, props: RenderProps) {
         let active_room = self.props.active_room.clone();
         let room_list: Vec<ListItem> = self
             .rooms()

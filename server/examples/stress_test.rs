@@ -11,15 +11,15 @@ use serde::{Deserialize, Serialize};
 use tokio::{net::TcpStream, task::JoinSet};
 use tokio_stream::StreamExt;
 
-/// Stres Test for the Chat Server
+/// Stress Test for the Chat Server
 ///
 /// Generates synthetic load with users who joins and sends messages to random roms.
-/// The number of users, number of rooms joined per user and chattines of users can be configured.
+/// The number of users, number of rooms joined per user and chatting of users can be configured.
 ///
 /// !IMPORTANT! Be sure to check and configure your socket limits, before you run the tests
 
 const SERVER_ADDR: &str = "localhost:8080";
-const CHAT_ROOMS_METADATAS: &str = include_str!("../resources/chat_rooms_metadatas.json");
+const CHAT_ROOMS_METADATA: &str = include_str!("../resources/chat_rooms_metadata.json");
 
 /// Stress Test Configuration
 // The number of users to spawn, distributed across the load increments
@@ -85,7 +85,7 @@ async fn spawn_single_user_raw(rooms_to_join: Vec<String>) -> anyhow::Result<()>
 
     let _login_event = match event_stream.next().await {
         Some(Ok(Event::LoginSuccessful(login_event))) => login_event,
-        _ => return Err(anyhow::anyhow!("server did not send login successfull")),
+        _ => return Err(anyhow::anyhow!("server did not send login successful")),
     };
 
     for room_name in rooms_to_join.iter() {
@@ -134,10 +134,10 @@ async fn spawn_single_user_raw(rooms_to_join: Vec<String>) -> anyhow::Result<()>
 async fn main() {
     let load_increments: Vec<LoadIncrements> =
         serde_json::from_str(LOAD_INCREMENTS).expect("could not parse the load increments");
-    let chat_room_metadatas: Vec<ChatRoomMetadata> = serde_json::from_str(CHAT_ROOMS_METADATAS)
-        .expect("could not parse the chat rooms metadatas");
+    let chat_room_metadata: Vec<ChatRoomMetadata> = serde_json::from_str(CHAT_ROOMS_METADATA)
+        .expect("could not parse the chat rooms metadata");
 
-    let mut room_iterator = RotatingIterator::new(chat_room_metadatas);
+    let mut room_iterator = RotatingIterator::new(chat_room_metadata);
     let mut join_set: JoinSet<anyhow::Result<()>> = JoinSet::new();
 
     let mut current: usize = 0;

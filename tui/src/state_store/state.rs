@@ -1,5 +1,6 @@
 use std::collections::{HashMap, HashSet};
-
+use std::fmt;
+use std::fmt::Formatter;
 use circular_queue::CircularQueue;
 use comms::event;
 
@@ -53,10 +54,21 @@ impl RoomData {
 
 #[derive(Debug, Clone)]
 pub enum ServerConnectionStatus {
-    Uninitalized,
+    Uninitialized,
     Connecting,
     Connected { addr: String },
     Errored { err: String },
+}
+
+impl fmt::Display for ServerConnectionStatus {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        match self {
+            ServerConnectionStatus::Uninitialized => write!(f, "Uninitialized"),
+            ServerConnectionStatus::Connecting => write!(f, "Connecting"),
+            ServerConnectionStatus::Connected { addr } => write!(f, "Connected to {}", addr),
+            ServerConnectionStatus::Errored { err } => write!(f, "Errored: {}", err),
+        }
+    }
 }
 
 /// State holds the state of the application
@@ -76,7 +88,7 @@ pub struct State {
 impl Default for State {
     fn default() -> Self {
         State {
-            server_connection_status: ServerConnectionStatus::Uninitalized,
+            server_connection_status: ServerConnectionStatus::Uninitialized,
             active_room: None,
             user_id: String::new(),
             room_data_map: HashMap::new(),

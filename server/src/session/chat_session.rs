@@ -52,7 +52,7 @@ impl ChatSession {
                     .join_room(&cmd.room, &self.session_and_user_id)
                     .await?;
 
-                // spawn a task to forward broadcasted messages to the users' mpsc channel
+                // spawn a task to forward broadcast messages to the users' mpsc channel
                 // hence the user can receive messages from different rooms via single channel
                 let abort_handle = self.join_set.spawn({
                     let mpsc_tx = self.mpsc_tx.clone();
@@ -108,7 +108,7 @@ impl ChatSession {
     }
 
     /// Cleanup the room by removing the user from the room and
-    /// aborting the task that forwards broadcasted messages to the user
+    /// aborting the task that forwards broadcast messages to the user
     async fn cleanup_room(
         &mut self,
         (user_session_handle, abort_handle): (UserSessionHandle, AbortHandle),
@@ -122,7 +122,7 @@ impl ChatSession {
         Ok(())
     }
 
-    /// Recieve an event that may have originated from any of the rooms the user is actively participating in
+    /// Receive an event that may have originated from any of the rooms the user is actively participating in
     pub async fn recv(&mut self) -> anyhow::Result<Event> {
         self.mpsc_rx
             .recv()

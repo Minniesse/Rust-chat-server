@@ -50,7 +50,7 @@ impl UserSessionHandle {
     /// Send a message to the room
     pub fn send_message(&self, content: String) -> anyhow::Result<()> {
         self.broadcast_tx
-            .send(comms::event::Event::UserMessage(
+            .send(event::Event::UserMessage(
                 event::UserMessageBroadcastEvent {
                     room: self.room.clone(),
                     user_id: self.session_and_user_id.user_id.clone(),

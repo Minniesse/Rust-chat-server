@@ -1,5 +1,5 @@
 use crossterm::event::KeyEvent;
-use ratatui::{prelude::Backend, Frame};
+use ratatui::Frame;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::state_store::{action::Action, ServerConnectionStatus, State};
@@ -91,7 +91,7 @@ impl Component for AppRouter {
 }
 
 impl ComponentRender<()> for AppRouter {
-    fn render<B: Backend>(&self, frame: &mut Frame<B>, props: ()) {
+    fn render(&self, frame: &mut Frame, props: ()) {
         match self.props.active_page {
             ActivePage::ChatPage => self.chat_page.render(frame, props),
             ActivePage::ConnectPage => self.connect_page.render(frame, props),

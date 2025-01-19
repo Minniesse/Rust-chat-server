@@ -13,7 +13,7 @@ mod room_manager;
 
 #[derive(Debug)]
 pub struct RoomManagerBuilder {
-    chat_rooms: Vec<(ChatRoomMetadata, Arc<Mutex<room::ChatRoom>>)>,
+    chat_rooms: Vec<(ChatRoomMetadata, Arc<Mutex<ChatRoom>>)>,
 }
 
 impl RoomManagerBuilder {

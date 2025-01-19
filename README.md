@@ -18,11 +18,11 @@ To get the project up and running, follow these steps:
 
 ## Project Overview
 
-The project utilizes Rust Workspaces to divide itself into three sub-projects, each with its own README that details the concepts and architecture. Below is a brief overview:
+The project utilizes Rust Workspaces to divide itself into three subprojects, each with its own README that details the concepts and architecture. Below is a brief overview:
 
-- [comms](./comms/): This sub-project houses a library crate that provides Events and Commands used for server-client communication. It also offers client/server socket utilities, enabled via feature flags, to assist in serializing and deserializing events and commands.
-- [server](./server/): Built on the [Tokio Runtime](https://tokio.rs/) and using [Tokio Channels](https://tokio.rs/tokio/tutorial/channels), this sub-project implements a single-instance chat server that manages room states and user participation.
-- [tui](./tui/): Leveraging [Ratatui](https://github.com/ratatui-org/ratatui), this sub-project implements a terminal-based user interface. Users can connect to a chat server, join rooms, and send/receive messages. The code follows a Redux-inspired structure to separate state management from TUI rendering.
+- [comms](./comms/): This subproject houses a library crate that provides Events and Commands used for server-client communication. It also offers client/server socket utilities, enabled via feature flags, to assist in serializing and deserializing events and commands.
+- [server](./server/): Built on the [Tokio Runtime](https://tokio.rs/) and using [Tokio Channels](https://tokio.rs/tokio/tutorial/channels), this subproject implements a single-instance chat server that manages room states and user participation.
+- [tui](./tui/): Leveraging [Ratatui](https://github.com/ratatui-org/ratatui), this subproject implements a terminal-based user interface. Users can connect to a chat server, join rooms, and send/receive messages. The code follows a Redux-inspired structure to separate state management from TUI rendering.
 
 ## License
 

@@ -10,18 +10,18 @@ pub type RoomJoinResult = (broadcast::Receiver<Event>, UserSessionHandle, Vec<St
 #[derive(Debug, Clone)]
 pub struct RoomManager {
     chat_rooms: HashMap<String, Arc<Mutex<ChatRoom>>>,
-    chat_room_metadatas: Vec<ChatRoomMetadata>,
+    chat_room_metadata: Vec<ChatRoomMetadata>,
 }
 
 impl RoomManager {
     pub(super) fn new(chat_rooms: Vec<(ChatRoomMetadata, Arc<Mutex<ChatRoom>>)>) -> RoomManager {
-        let chat_room_metadatas = chat_rooms
+        let chat_room_metadata = chat_rooms
             .iter()
             .map(|(metadata, _)| metadata.clone())
             .collect();
 
         RoomManager {
-            chat_room_metadatas,
+            chat_room_metadata,
             chat_rooms: chat_rooms
                 .into_iter()
                 .map(|(metadata, chat_room)| (metadata.name.clone(), chat_room))
@@ -29,8 +29,8 @@ impl RoomManager {
         }
     }
 
-    pub fn chat_room_metadatas(&self) -> &Vec<ChatRoomMetadata> {
-        &self.chat_room_metadatas
+    pub fn chat_room_metadata(&self) -> &Vec<ChatRoomMetadata> {
+        &self.chat_room_metadata
     }
 
     /// Joins to a room given a user session

@@ -20,7 +20,7 @@ const BROADCAST_CHANNEL_CAPACITY: usize = 100;
 /// A [UserSessionHandle] is handed out to a user when they join the room
 pub struct ChatRoom {
     metadata: ChatRoomMetadata,
-    broadcast_tx: broadcast::Sender<event::Event>,
+    broadcast_tx: broadcast::Sender<Event>,
     user_registry: UserRegistry,
 }
 
@@ -60,8 +60,8 @@ impl ChatRoom {
         // If the user is new e.g. they do not have another session with same user id,
         // broadcast that they joined to all users
         if self.user_registry.insert(&user_session_handle) {
-            let _ = self.broadcast_tx.send(event::Event::RoomParticipation(
-                event::RoomParticipationBroacastEvent {
+            let _ = self.broadcast_tx.send(Event::RoomParticipation(
+                event::RoomParticipationBroadcastEvent {
                     user_id: session_and_user_id.user_id.clone(),
                     room: self.metadata.name.clone(),
                     status: event::RoomParticipationStatus::Joined,
@@ -76,8 +76,8 @@ impl ChatRoom {
     /// Consume the [UserSessionHandle] to drop it
     pub fn leave(&mut self, user_session_handle: UserSessionHandle) {
         if self.user_registry.remove(&user_session_handle) {
-            let _ = self.broadcast_tx.send(event::Event::RoomParticipation(
-                event::RoomParticipationBroacastEvent {
+            let _ = self.broadcast_tx.send(Event::RoomParticipation(
+                event::RoomParticipationBroadcastEvent {
                     user_id: String::from(user_session_handle.user_id()),
                     room: self.metadata.name.clone(),
                     status: event::RoomParticipationStatus::Left,

@@ -4,7 +4,7 @@ use crossterm::event::{KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
 use ratatui::{prelude::*, widgets::*, Frame};
 use tokio::sync::mpsc::UnboundedSender;
 
-use crate::state_store::{action::Action, MessageBoxItem, RoomData, State};
+use crate::state_store::{action::Action, MessageBoxItem, RoomData, ServerConnectionStatus, State};
 
 use super::{
     components::{
@@ -48,7 +48,7 @@ impl TryFrom<usize> for Section {
 }
 
 struct Props {
-    /// The logged in user
+    /// The logged-in user
     user_id: String,
     /// The currently active room
     active_room: Option<String>,
@@ -56,6 +56,8 @@ struct Props {
     timer: usize,
     /// The room data map
     room_data_map: HashMap<String, RoomData>,
+    /// Connection status for the current connection
+    connection_status: ServerConnectionStatus,
 }
 
 impl From<&State> for Props {
@@ -65,6 +67,7 @@ impl From<&State> for Props {
             active_room: state.active_room.clone(),
             timer: state.timer,
             room_data_map: state.room_data_map.clone(),
+            connection_status: state.server_connection_status.clone(),
         }
     }
 }
@@ -160,7 +163,7 @@ impl Component for ChatPage {
             // set the props
             props: Props::from(state),
             // internal component state
-            active_section: Option::None,
+            active_section: None,
             last_hovered_section: DEFAULT_HOVERED_SECTION,
             // child components
             room_list: RoomList::new(state, action_tx.clone()),
@@ -175,7 +178,7 @@ impl Component for ChatPage {
     {
         ChatPage {
             props: Props::from(state),
-            // propogate the update to the child components
+            // propagate the update to the child components
             room_list: self.room_list.move_with_state(state),
             message_input_box: self.message_input_box.move_with_state(state),
             ..self
@@ -195,7 +198,7 @@ impl Component for ChatPage {
 
         match active_section {
             None => match key.code {
-                KeyCode::Char('e') => {
+                KeyCode::Enter => {
                     let last_hovered_section = self.last_hovered_section.clone();
 
                     self.active_section = Some(last_hovered_section.clone());
@@ -239,7 +242,7 @@ fn calculate_list_offset(height: u16, items_len: usize) -> usize {
 }
 
 impl ComponentRender<()> for ChatPage {
-    fn render<B: Backend>(&self, frame: &mut Frame<B>, _props: ()) {
+    fn render(&self, frame: &mut Frame, _props: ()) {
         let [left, middle, right] = *Layout::default()
             .direction(Direction::Horizontal)
             .constraints(
@@ -250,14 +253,14 @@ impl ComponentRender<()> for ChatPage {
                 ]
                 .as_ref(),
             )
-            .split(frame.size())
+            .split(frame.area())
         else {
             panic!("The main layout should have 3 chunks")
         };
 
         let [container_room_list, container_user_info] = *Layout::default()
             .direction(Direction::Vertical)
-            .constraints([Constraint::Min(1), Constraint::Length(4)].as_ref())
+            .constraints([Constraint::Min(1), Constraint::Length(6)].as_ref())
             .split(left)
         else {
             panic!("The left layout should have 2 chunks")
@@ -274,7 +277,8 @@ impl ComponentRender<()> for ChatPage {
         let user_info = Paragraph::new(Text::from(vec![
             Line::from(format!("User: @{}", self.props.user_id)),
             Line::from(format!("Chatting for: {} secs", self.props.timer)),
-        ]))
+            Line::from(format!("Server: {}", self.props.connection_status)),
+        ])).wrap(Wrap { trim: false })
         .block(
             Block::default()
                 .borders(Borders::ALL)
@@ -409,7 +413,7 @@ impl ComponentRender<()> for ChatPage {
         frame.render_widget(room_users_list, container_room_users);
 
         let mut usage_text: Text = widget_usage_to_text(self.usage_info());
-        usage_text.patch_style(Style::default());
+        usage_text = usage_text.patch_style(Style::default());
         let usage = Paragraph::new(usage_text)
             .wrap(Wrap { trim: true })
             .block(Block::default().borders(Borders::ALL).title("Usage"));
@@ -439,7 +443,7 @@ impl HasUsageInfo for ChatPage {
                         description: "to hover widgets".into(),
                     },
                     UsageInfoLine {
-                        keys: vec!["e".into()],
+                        keys: vec!["Enter".into()],
                         description: format!(
                             "to activate {}",
                             self.get_component_for_section(&self.last_hovered_section)

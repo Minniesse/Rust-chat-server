@@ -1,6 +1,6 @@
 use crossterm::event::{KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
-    prelude::{Backend, Rect},
+    prelude::Rect,
     style::Color,
     Frame,
 };
@@ -106,7 +106,7 @@ pub struct RenderProps {
 }
 
 impl ComponentRender<RenderProps> for MessageInputBox {
-    fn render<B: Backend>(&self, frame: &mut Frame<B>, props: RenderProps) {
+    fn render(&self, frame: &mut Frame, props: RenderProps) {
         self.input_box.render(
             frame,
             input_box::RenderProps {

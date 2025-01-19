@@ -8,13 +8,13 @@ The `server` binary is the backbone of the [rust-chat-server](../). It establish
 
 - **Async I/O**: Utilizes [Tokio Runtime](https://tokio.rs/) and [Tokio Streams](https://tokio.rs/tokio/tutorial/streams) for asynchronous, non-blocking I/O.
 - **Actor-like Model**: Uses [Tokio Channels](https://tokio.rs/tokio/tutorial/channels) for an actor-inspired, lightweight architecture.
-- **Chat Rooms**: File-based (JSON) chat room definitions in the [resources/](./resources/chat_rooms_metadatas.json) folder.
+- **Chat Rooms**: File-based (JSON) chat room definitions in the [resources/](./resources/chat_rooms_metadata.json) folder.
 
 ## 🏗 High-Level Architecture 
 
 ![High Level Architecture Diagram](./docs/high-level-architecture.svg)
 
-1. **Bootstrap**: Reads from [resources/](./resources/chat_rooms_metadatas.json) to initialize chat rooms.
+1. **Bootstrap**: Reads from [resources/](./resources/chat_rooms_metadata.json) to initialize chat rooms.
 2. **Server Start**: Handles a variable number of concurrent users. For a terminal-based client, see the [tui project](../tui/).
     - **Commands**: Join, leave rooms or send room-specific messages.
 3. **ChatSession**: Manages individual user commands and room subscriptions.

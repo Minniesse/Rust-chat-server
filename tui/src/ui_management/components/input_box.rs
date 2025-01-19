@@ -1,10 +1,11 @@
 use crossterm::event::{KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
-    prelude::{Backend, Rect},
+    prelude::Rect,
     style::{Color, Style, Stylize},
     widgets::{Block, Borders, Paragraph},
     Frame,
 };
+use ratatui::prelude::Position;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::state_store::{action::Action, State};
@@ -131,7 +132,7 @@ pub struct RenderProps {
 }
 
 impl ComponentRender<RenderProps> for InputBox {
-    fn render<B: Backend>(&self, frame: &mut Frame<B>, props: RenderProps) {
+    fn render(&self, frame: &mut Frame, props: RenderProps) {
         let input = Paragraph::new(self.text.as_str())
             .style(Style::default().fg(Color::Yellow))
             .block(
@@ -146,13 +147,13 @@ impl ComponentRender<RenderProps> for InputBox {
         if props.show_cursor {
             // Make the cursor visible and ask ratatui to put it at the specified coordinates after
             // rendering
-            frame.set_cursor(
+            frame.set_cursor_position(Position::new(
                 // Draw the cursor at the current position in the input field.
                 // This position is can be controlled via the left and right arrow key
                 props.area.x + self.cursor_position as u16 + 1,
                 // Move one line down, from the border to the input line
                 props.area.y + 1,
-            )
+            ))
         }
     }
 }

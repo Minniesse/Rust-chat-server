@@ -35,7 +35,7 @@ pub async fn handle_user_session(
                 session_id: session_id.clone(),
                 user_id: user_id.clone(),
                 rooms: room_manager
-                    .chat_room_metadatas()
+                    .chat_room_metadata()
                     .iter()
                     .map(|metadata| RoomDetail {
                         name: metadata.name.clone(),
@@ -54,7 +54,7 @@ pub async fn handle_user_session(
         tokio::select! {
             cmd = commands.next() => match cmd {
                 // If the user closes the tcp stream, or sends a quit cmd
-                // We need to cleanup resources in a way that the other users are notified about the user's departure
+                // We need to clean up resources in a way that the other users are notified about the user's departure
                 None | Some(Ok(UserCommand::Quit(_))) => {
                     chat_session.leave_all_rooms().await?;
                     break;

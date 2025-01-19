@@ -127,7 +127,7 @@ impl StateStore {
                                     // set the server handle and change status for further processing
                                     let _ = opt_server_handle.insert(server_handle);
                                     state.process_connection_request_result(Ok(addr));
-                                    // ticker needs to be resetted to avoid showing time spent inputting and connecting to the server address
+                                    // ticker needs to be reset to avoid showing time spent inputting and connecting to the server address
                                     ticker.reset();
                                 },
                                 Err(err) => {

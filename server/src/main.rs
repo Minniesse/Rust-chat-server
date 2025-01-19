@@ -10,14 +10,14 @@ mod room_manager;
 mod session;
 
 const PORT: u16 = 8080;
-const CHAT_ROOMS_METADATAS: &str = include_str!("../resources/chat_rooms_metadatas.json");
+const CHAT_ROOMS_METADATA: &str = include_str!("../resources/chat_rooms_metadata.json");
 
 #[tokio::main]
 async fn main() {
-    let chat_room_metadatas: Vec<ChatRoomMetadata> = serde_json::from_str(CHAT_ROOMS_METADATAS)
+    let chat_room_metadata: Vec<ChatRoomMetadata> = serde_json::from_str(CHAT_ROOMS_METADATA)
         .expect("could not parse the chat rooms metadatas");
     let room_manager = Arc::new(
-        chat_room_metadatas
+        chat_room_metadata
             .into_iter()
             .fold(RoomManagerBuilder::new(), |builder, metadata| {
                 builder.create_room(metadata)

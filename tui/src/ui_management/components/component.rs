@@ -1,5 +1,5 @@
 use crossterm::event::KeyEvent;
-use ratatui::{prelude::Backend, Frame};
+use ratatui::Frame;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::state_store::{action::Action, State};
@@ -18,5 +18,5 @@ pub trait Component {
 }
 
 pub trait ComponentRender<Props> {
-    fn render<B: Backend>(&self, frame: &mut Frame<B>, props: Props);
+    fn render(&self, frame: &mut Frame, props: Props);
 }

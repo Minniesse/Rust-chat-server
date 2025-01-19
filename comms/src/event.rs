@@ -35,7 +35,7 @@ pub enum RoomParticipationStatus {
 
 /// A user has joined or left a room
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct RoomParticipationBroacastEvent {
+pub struct RoomParticipationBroadcastEvent {
     /// The slug of the room the user has joined or left
     #[serde(rename = "r")]
     pub room: String,
@@ -75,10 +75,10 @@ pub struct UserMessageBroadcastEvent {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "_et", rename_all = "snake_case")]
 /// Events that can be sent to the client
-/// Events maybe related to different users and rooms, the receipient is a single chat session
+/// Events maybe related to different users and rooms, the recipient is a single chat session
 pub enum Event {
     LoginSuccessful(LoginSuccessfulReplyEvent),
-    RoomParticipation(RoomParticipationBroacastEvent),
+    RoomParticipation(RoomParticipationBroadcastEvent),
     UserJoinedRoom(UserJoinedRoomReplyEvent),
     UserMessage(UserMessageBroadcastEvent),
 }
@@ -87,7 +87,7 @@ pub enum Event {
 mod tests {
     use super::*;
 
-    // given an event enum, and an expect string, asserts that event is serialized / deserialized appropiately
+    // given an event enum, and an expect string, asserts that event is serialized / deserialized appropriately
     fn assert_event_serialization(event: &Event, expected: &str) {
         let serialized = serde_json::to_string(&event).unwrap();
         assert_eq!(serialized, expected);
@@ -114,7 +114,7 @@ mod tests {
 
     #[test]
     fn test_room_participation_join_event() {
-        let event = Event::RoomParticipation(RoomParticipationBroacastEvent {
+        let event = Event::RoomParticipation(RoomParticipationBroadcastEvent {
             room: "test".to_string(),
             user_id: "test".to_string(),
             status: RoomParticipationStatus::Joined,
@@ -128,7 +128,7 @@ mod tests {
 
     #[test]
     fn test_room_participation_leave_event() {
-        let event = Event::RoomParticipation(RoomParticipationBroacastEvent {
+        let event = Event::RoomParticipation(RoomParticipationBroadcastEvent {
             room: "test".to_string(),
             user_id: "test".to_string(),
             status: RoomParticipationStatus::Left,

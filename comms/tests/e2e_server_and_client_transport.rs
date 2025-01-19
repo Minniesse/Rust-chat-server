@@ -39,7 +39,7 @@ async fn assert_server_client_transport() {
     );
 }
 
-async fn execute_server() -> anyhow::Result<Vec<command::UserCommand>> {
+async fn execute_server() -> anyhow::Result<Vec<UserCommand>> {
     // bind to the example port to wait for client connection
     let listener = TcpListener::bind(format!("0.0.0.0:{}", PORT))
         .await
@@ -79,7 +79,7 @@ async fn execute_server() -> anyhow::Result<Vec<command::UserCommand>> {
     Ok(collected_commands)
 }
 
-async fn execute_client() -> anyhow::Result<Vec<event::Event>> {
+async fn execute_client() -> anyhow::Result<Vec<Event>> {
     // create a client connection to the server
     let tcp_stream = match TcpStream::connect(format!("localhost:{}", PORT)).await {
         Ok(tcp_stream) => tcp_stream,

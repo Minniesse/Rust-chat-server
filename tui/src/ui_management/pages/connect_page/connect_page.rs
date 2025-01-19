@@ -105,7 +105,7 @@ impl Component for ConnectPage {
 }
 
 impl ComponentRender<()> for ConnectPage {
-    fn render<B: Backend>(&self, frame: &mut Frame<B>, _props: ()) {
+    fn render(&self, frame: &mut Frame, _props: ()) {
         let [_, vertical_centered, _] = *Layout::default()
             .direction(Direction::Vertical)
             .constraints(
@@ -116,7 +116,7 @@ impl ComponentRender<()> for ConnectPage {
                 ]
                 .as_ref(),
             )
-            .split(frame.size())
+            .split(frame.area())
         else {
             panic!("The main layout should have 3 chunks")
         };
