@@ -31,6 +31,15 @@ pub struct SendMessageCommand {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct QuitCommand;
 
+// MODIFIED: Added GetHistoryCommand struct
+/// User Command for getting chat history of a room.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct GetHistoryCommand {
+    // The room to get history from.
+    #[serde(rename = "r")]
+    pub room: String,
+}
+
 /// A user command which can be sent to the server by a single user session.
 /// All commands are processed in the context of the chat server paired with an individual user session.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -40,6 +49,8 @@ pub enum UserCommand {
     LeaveRoom(LeaveRoomCommand),
     SendMessage(SendMessageCommand),
     Quit(QuitCommand),
+    // MODIFIED: Added GetHistory variant
+    GetHistory(GetHistoryCommand),
 }
 
 #[cfg(test)]
@@ -87,5 +98,15 @@ mod tests {
         let command = UserCommand::Quit(QuitCommand);
 
         assert_command_serialization(&command, r#"{"_ct":"quit"}"#);
+    }
+
+    // MODIFIED: Added test for GetHistory command
+    #[test]
+    fn test_get_history_command() {
+        let command = UserCommand::GetHistory(GetHistoryCommand {
+            room: "test".to_string(),
+        });
+
+        assert_command_serialization(&command, r#"{"_ct":"get_history","r":"test"}"#);
     }
 }

@@ -52,6 +52,10 @@ impl ChatSession {
                     .join_room(&cmd.room, &self.session_and_user_id)
                     .await?;
 
+                // MODIFIED: Request chat history after joining
+                self.room_manager.get_room_history(&cmd.room, &self.session_and_user_id.session_id).await?;
+    
+
                 // spawn a task to forward broadcast messages to the users' mpsc channel
                 // hence the user can receive messages from different rooms via single channel
                 let abort_handle = self.join_set.spawn({
@@ -79,9 +83,20 @@ impl ChatSession {
             }
             UserCommand::SendMessage(cmd) => {
                 if let Some((user_session_handle, _)) = self.joined_rooms.get(&cmd.room) {
-                    let _ = user_session_handle.send_message(cmd.content);
+                    // MODIFIED: Use room manager to handle message
+                    self.room_manager.handle_message(
+                        &cmd.room,
+                        self.session_and_user_id.user_id.clone(),
+                        cmd.content,
+                    ).await?;
                 }
             }
+
+            UserCommand::GetHistory(cmd) => {
+                // MODIFIED: Handle GetHistory command
+                self.room_manager.get_room_history(&cmd.room, &self.session_and_user_id.session_id).await?;
+            }
+            
             UserCommand::LeaveRoom(cmd) => {
                 // remove the room from joined rooms and drop user session handle for the room
                 if let Some(urp) = self.joined_rooms.remove(&cmd.room) {

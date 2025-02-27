@@ -9,7 +9,7 @@ use crate::room_manager::ChatRoomMetadata;
 mod room_manager;
 mod session;
 
-const PORT: u16 = 8080;
+const PORT: u16 = 8085;
 const CHAT_ROOMS_METADATA: &str = include_str!("../resources/chat_rooms_metadata.json");
 
 #[tokio::main]

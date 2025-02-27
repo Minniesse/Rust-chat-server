@@ -156,6 +156,22 @@ impl State {
                     }
                 }
             }
+            
+            // MODIFIED: Added handler for ChatHistory event
+            event::Event::ChatHistory(event) => {
+                if let Some(room_data) = self.room_data_map.get_mut(&event.room) {
+                    // Clear existing messages first
+                    room_data.messages.clear();
+                    
+                    // Add historical messages
+                    for msg in &event.messages {
+                        room_data.messages.push(MessageBoxItem::Message {
+                            user_id: msg.user_id.clone(),
+                            content: msg.content.clone(),
+                        });
+                    }
+                }
+            }
         }
     }
 

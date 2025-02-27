@@ -23,6 +23,7 @@ pub struct RoomState {
     pub has_unread: bool,
 }
 
+
 struct Props {
     /// List of rooms and current state of those rooms
     rooms: Vec<RoomState>,

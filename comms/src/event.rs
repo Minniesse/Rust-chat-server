@@ -1,5 +1,28 @@
 use serde::{Deserialize, Serialize};
 
+// MODIFIED: Added ChatHistoryReplyEvent struct
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ChatHistoryReplyEvent {
+    /// The room this history is for
+    #[serde(rename = "r")]
+    pub room: String,
+    /// The history messages with their senders
+    #[serde(rename = "m")]
+    pub messages: Vec<HistoryMessage>,
+}
+
+// MODIFIED: Added HistoryMessage struct
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct HistoryMessage {
+    /// The user who sent the message
+    #[serde(rename = "u")]
+    pub user_id: String,
+    /// The content of the message
+    #[serde(rename = "c")]
+    pub content: String,
+}
+
+
 /// The detail of a given room
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct RoomDetail {
@@ -81,6 +104,8 @@ pub enum Event {
     RoomParticipation(RoomParticipationBroadcastEvent),
     UserJoinedRoom(UserJoinedRoomReplyEvent),
     UserMessage(UserMessageBroadcastEvent),
+    // MODIFIED: Added ChatHistory variant
+    ChatHistory(ChatHistoryReplyEvent),
 }
 
 #[cfg(test)]
@@ -164,6 +189,23 @@ mod tests {
         assert_event_serialization(
             &event,
             r#"{"_et":"user_message","r":"test","u":"test","c":"test"}"#,
+        );
+    }
+
+    // MODIFIED: Added test for chat history event
+    #[test]
+    fn test_chat_history_event() {
+        let event = Event::ChatHistory(ChatHistoryReplyEvent {
+            room: "test".to_string(),
+            messages: vec![HistoryMessage {
+                user_id: "user1".to_string(),
+                content: "test message".to_string(),
+            }],
+        });
+
+        assert_event_serialization(
+            &event,
+            r#"{"_et":"chat_history","r":"test","m":[{"u":"user1","c":"test message"}]}"#,
         );
     }
 }

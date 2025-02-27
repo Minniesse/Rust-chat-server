@@ -15,8 +15,6 @@ use self::chat_session::ChatSession;
 
 mod chat_session;
 
-/// Given a tcp stream and a room manager, handles the user session
-/// until the user quits the session, or the tcp stream is closed for some reason, or the server shuts down
 pub async fn handle_user_session(
     room_manager: Arc<RoomManager>,
     mut quit_rx: broadcast::Receiver<()>,
@@ -53,29 +51,22 @@ pub async fn handle_user_session(
     loop {
         tokio::select! {
             cmd = commands.next() => match cmd {
-                // If the user closes the tcp stream, or sends a quit cmd
-                // We need to clean up resources in a way that the other users are notified about the user's departure
                 None | Some(Ok(UserCommand::Quit(_))) => {
                     chat_session.leave_all_rooms().await?;
                     break;
                 }
-                // Handle a valid user command
                 Some(Ok(cmd)) => match cmd {
                     // For user session related commands, we need to handle them in the chat session
-                    UserCommand::JoinRoom(_) | UserCommand::SendMessage(_) | UserCommand::LeaveRoom(_) => {
+                    UserCommand::JoinRoom(_) | UserCommand::SendMessage(_) | UserCommand::LeaveRoom(_) | UserCommand::GetHistory(_) => {
                         chat_session.handle_user_command(cmd).await?;
                     }
                     _ => {}
                 }
                 _ => {}
             },
-            // Aggregated events from the chat session are sent to the user
             Ok(event) = chat_session.recv() => {
                 event_writer.write(&event).await?;
             }
-            // If the server is shutting down, we can just close the tcp streams
-            // and exit the session handler. Since the server is shutting down,
-            // we don't need to notify other users about the user's departure or cleanup resources
             Ok(_) = quit_rx.recv() => {
                 drop(event_writer);
                 println!("Gracefully shutting down user tcp stream.");

@@ -1,7 +1,7 @@
-use std::{collections::HashMap, sync::Arc};
-
-use comms::event::Event;
+use std::collections::HashMap;
+use std::sync::Arc;
 use tokio::sync::{broadcast, Mutex};
+use comms::event::Event;  // MODIFIED: Added Event import
 
 use super::room::{ChatRoom, ChatRoomMetadata, SessionAndUserId, UserSessionHandle};
 
@@ -65,5 +65,27 @@ impl RoomManager {
         room.leave(handle);
 
         Ok(())
+    }
+
+    // MODIFIED: Added method to handle messages at room manager level
+    pub async fn handle_message(&self, room_name: &str, user_id: String, content: String) -> anyhow::Result<()> {
+        let room = self
+            .chat_rooms
+            .get(room_name)
+            .ok_or_else(|| anyhow::anyhow!("room '{}' not found", room_name))?;
+
+        let mut room = room.lock().await;
+        room.handle_message(user_id, content)
+    }
+
+    // MODIFIED: Added method to get room history
+    pub async fn get_room_history(&self, room_name: &str, session_id: &str) -> anyhow::Result<()> {
+        let room = self
+            .chat_rooms
+            .get(room_name)
+            .ok_or_else(|| anyhow::anyhow!("room '{}' not found", room_name))?;
+
+        let room = room.lock().await;
+        room.send_history_to_session(session_id)
     }
 }
